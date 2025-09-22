@@ -79,3 +79,6 @@ test-*.js
 
 # MCP snapshot files
 mcp-codebase-snapshot.json
+
+# Announcement (not ready yet)
+ANNOUNCEMENT.md
