@@ -1,10 +1,12 @@
 # claude-context-local
 
+![Social Preview](./social-preview.svg)
+
 > **Project Philosophy**: This project maintains the full history of the original [claude-context](https://github.com/zilliztech/claude-context) for transparency and attribution, but represents a **divergent branch focused on privacy and local operation**. While the original continues toward cloud integration, we're committed to a **100% local, privacy-first approach**. Both projects serve different needs in the ecosystem.
 
 A local-first implementation of claude-context MCP server that replaces cloud dependencies with local alternatives for complete privacy and zero API costs.
 
-## < Key Features
+## 🚀 Key Features
 
 - **100% Local**: No external API calls, all processing happens on your machine
 - **PostgreSQL + pgvector**: Replaces Milvus/Zilliz Cloud with local PostgreSQL
@@ -13,7 +15,7 @@ A local-first implementation of claude-context MCP server that replaces cloud de
 - **Zero API Costs**: No subscription fees or usage charges
 - **Multimodal Support**: Nomic embedding model supports text and images
 
-## =� Quick Start
+## ⚡ Quick Start
 
 ### Prerequisites
 
@@ -63,7 +65,7 @@ node packages/mcp/dist/index-postgres.js
 POSTGRES_HOST=your-db POSTGRES_PASSWORD=your-pass node packages/mcp/dist/index-postgres.js
 ```
 
-## =' Configuration
+## ⚙️ Configuration
 
 ### Claude Code Integration
 
@@ -103,7 +105,7 @@ Add to your Claude Code config (`~/Library/Application Support/Claude/claude_des
 | `POSTGRES_USER` | `postgres` | Database user |
 | `POSTGRES_PASSWORD` | `postgres` | Database password |
 
-## =� Docker Setup (Optional)
+## 🐳 Docker Setup (Optional)
 
 For easier deployment, use Docker Compose:
 
@@ -141,7 +143,7 @@ docker-compose up -d
 docker exec -it claude-context-local_ollama_1 ollama pull DC1LEX/nomic-embed-text-v1.5-multimodal
 ```
 
-## =� MCP Tools
+## 🔧 MCP Tools
 
 ### `add_codebase`
 Index a codebase directory for semantic search:
@@ -161,7 +163,7 @@ search_codebase({
 })
 ```
 
-## =� Comparison with Original
+## 📊 Comparison with Original
 
 | Feature | Original (Milvus) | Local (PostgreSQL) |
 |---------|-------------------|--------------------|
@@ -173,7 +175,7 @@ search_codebase({
 | Internet | Required | Not required |
 | Dimensions | Variable | 768 (configurable) |
 
-## > Credits & Attribution
+## 🙏 Credits & Attribution
 
 This project is based on [claude-context](https://github.com/zilliztech/claude-context) by [Zilliz](https://github.com/zilliztech), licensed under the MIT License.
 
@@ -188,13 +190,13 @@ This project is based on [claude-context](https://github.com/zilliztech/claude-c
 - [Zilliz Team](https://github.com/zilliztech) - Original claude-context implementation
 - [Cheney Zhang](https://github.com/shanghaikid) - Original author
 
-## =� Documentation
+## 📚 Documentation
 
 - [PostgreSQL Setup Guide](./README-POSTGRES.md) - Detailed PostgreSQL configuration
 - [Test Script](./test-postgres.js) - Verify your installation
 - [Original Documentation](https://github.com/zilliztech/claude-context) - Reference the original project
 
-## = Troubleshooting
+## 🔍 Troubleshooting
 
 ### Common Issues
 
@@ -214,7 +216,7 @@ This project is based on [claude-context](https://github.com/zilliztech/claude-c
    ollama pull DC1LEX/nomic-embed-text-v1.5-multimodal
    ```
 
-## =� Roadmap
+## 🗺️ Roadmap
 
 - [ ] SQLite support for simpler setup
 - [ ] Additional Ollama model support
@@ -223,7 +225,7 @@ This project is based on [claude-context](https://github.com/zilliztech/claude-c
 - [ ] Docker one-click deployment
 - [ ] Support for more local embedding models
 
-## > Contributing
+## 🤝 Contributing
 
 Contributions are welcome! This is a community project aimed at providing a fully local alternative to cloud-based code context solutions.
 
@@ -240,16 +242,16 @@ Contributions are welcome! This is a community project aimed at providing a full
 - Documentation improvements
 - Testing and bug fixes
 
-## =� License
+## 📄 License
 
 MIT License - see [LICENSE](./LICENSE) for details.
 
 This project includes code from [claude-context](https://github.com/zilliztech/claude-context) by Zilliz, also licensed under MIT.
 
-## P Star History
+## ⭐ Star History
 
 If you find this project useful, please consider giving it a star!
 
 ---
 
-Built with d for the community by [MikeO-AI](https://github.com/MikeO-AI)
+Built with ❤️ for the community by [MikeO-AI](https://github.com/MikeO-AI)
