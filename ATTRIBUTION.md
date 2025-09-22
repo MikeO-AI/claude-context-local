@@ -17,7 +17,7 @@ MIT License
 ## Modifications
 
 ### PostgreSQL + Ollama Implementation
-Copyright (c) 2024 MikeO-AI
+Copyright (c) 2025 MikeO-AI
 
 ### Key Changes Made
 1. **Database Layer**: Replaced Milvus/Zilliz Cloud with PostgreSQL + pgvector
