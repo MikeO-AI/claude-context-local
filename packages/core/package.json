@@ -1,6 +1,6 @@
 {
     "name": "@mikeo-ai/claude-context-local-core",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Core indexing engine for Claude Context Local (PostgreSQL + Ollama)",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
