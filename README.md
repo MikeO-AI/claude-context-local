@@ -1,6 +1,8 @@
 # claude-context-local
 
-A local-first implementation of [claude-context](https://github.com/zilliztech/claude-context) MCP server that replaces cloud dependencies with local alternatives for complete privacy and zero API costs.
+> **Project Philosophy**: This project maintains the full history of the original [claude-context](https://github.com/zilliztech/claude-context) for transparency and attribution, but represents a **divergent branch focused on privacy and local operation**. While the original continues toward cloud integration, we're committed to a **100% local, privacy-first approach**. Both projects serve different needs in the ecosystem.
+
+A local-first implementation of claude-context MCP server that replaces cloud dependencies with local alternatives for complete privacy and zero API costs.
 
 ## < Key Features
 
@@ -11,7 +13,7 @@ A local-first implementation of [claude-context](https://github.com/zilliztech/c
 - **Zero API Costs**: No subscription fees or usage charges
 - **Multimodal Support**: Nomic embedding model supports text and images
 
-## =€ Quick Start
+## =ï¿½ Quick Start
 
 ### Prerequisites
 
@@ -101,7 +103,7 @@ Add to your Claude Code config (`~/Library/Application Support/Claude/claude_des
 | `POSTGRES_USER` | `postgres` | Database user |
 | `POSTGRES_PASSWORD` | `postgres` | Database password |
 
-## =æ Docker Setup (Optional)
+## =ï¿½ Docker Setup (Optional)
 
 For easier deployment, use Docker Compose:
 
@@ -139,7 +141,7 @@ docker-compose up -d
 docker exec -it claude-context-local_ollama_1 ollama pull DC1LEX/nomic-embed-text-v1.5-multimodal
 ```
 
-## =à MCP Tools
+## =ï¿½ MCP Tools
 
 ### `add_codebase`
 Index a codebase directory for semantic search:
@@ -159,7 +161,7 @@ search_codebase({
 })
 ```
 
-## =Ê Comparison with Original
+## =ï¿½ Comparison with Original
 
 | Feature | Original (Milvus) | Local (PostgreSQL) |
 |---------|-------------------|--------------------|
@@ -186,7 +188,7 @@ This project is based on [claude-context](https://github.com/zilliztech/claude-c
 - [Zilliz Team](https://github.com/zilliztech) - Original claude-context implementation
 - [Cheney Zhang](https://github.com/shanghaikid) - Original author
 
-## =Ú Documentation
+## =ï¿½ Documentation
 
 - [PostgreSQL Setup Guide](./README-POSTGRES.md) - Detailed PostgreSQL configuration
 - [Test Script](./test-postgres.js) - Verify your installation
@@ -212,7 +214,7 @@ This project is based on [claude-context](https://github.com/zilliztech/claude-c
    ollama pull DC1LEX/nomic-embed-text-v1.5-multimodal
    ```
 
-## =€ Roadmap
+## =ï¿½ Roadmap
 
 - [ ] SQLite support for simpler setup
 - [ ] Additional Ollama model support
@@ -238,7 +240,7 @@ Contributions are welcome! This is a community project aimed at providing a full
 - Documentation improvements
 - Testing and bug fixes
 
-## =Ä License
+## =ï¿½ License
 
 MIT License - see [LICENSE](./LICENSE) for details.
 
