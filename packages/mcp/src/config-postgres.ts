@@ -1,4 +1,4 @@
-import { envManager } from "@zilliz/claude-context-core";
+import { envManager } from "@mikeo-ai/claude-context-local-core";
 
 export interface ContextMcpConfig {
     name: string;

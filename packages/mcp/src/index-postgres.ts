@@ -6,8 +6,8 @@ import {
     ListToolsRequestSchema,
     CallToolRequestSchema
 } from "@modelcontextprotocol/sdk/types.js";
-import { Context } from "@zilliz/claude-context-core";
-import { PostgresVectorDatabase } from "@zilliz/claude-context-core";
+import { Context } from "@mikeo-ai/claude-context-local-core";
+import { PostgresVectorDatabase } from "@mikeo-ai/claude-context-local-core";
 
 import { createMcpConfig, logConfigurationSummary, ContextMcpConfig } from "./config-postgres.js";
 import { createEmbeddingInstance, logEmbeddingProviderInfo } from "./embedding.js";
