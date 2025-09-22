@@ -1,6 +1,6 @@
 {
     "name": "@mikeo-ai/claude-context-local-mcp",
-    "version": "0.1.0",
+    "version": "0.2.1",
     "description": "Local MCP server for Claude Context using PostgreSQL and Ollama",
     "type": "module",
     "main": "dist/index-postgres.js",
@@ -9,7 +9,7 @@
         "claude-context-local-mcp": "dist/index-postgres.js"
     },
     "scripts": {
-        "build": "pnpm clean && tsc --build --force",
+        "build": "pnpm clean && tsc --build --force && chmod +x dist/index-postgres.js",
         "dev": "tsx --watch src/index.ts",
         "clean": "rimraf dist",
         "lint": "eslint src --ext .ts",
@@ -20,7 +20,7 @@
         "prepublishOnly": "pnpm build"
     },
     "dependencies": {
-        "@mikeo-ai/claude-context-local-core": "workspace:*",
+        "@mikeo-ai/claude-context-local-core": "^0.1.0",
         "@modelcontextprotocol/sdk": "^1.12.1",
         "zod": "^3.25.55"
     },

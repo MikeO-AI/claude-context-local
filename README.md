@@ -70,13 +70,24 @@ node packages/mcp/dist/index-postgres.js
 POSTGRES_HOST=your-db POSTGRES_PASSWORD=your-pass node packages/mcp/dist/index-postgres.js
 ```
 
-#### Method 2: NPM Package (Coming Soon)
+#### Method 2: NPM Package
 
-Once published to npm, you'll be able to install globally:
+Install globally from npm:
 ```bash
-# Note: Package publication pending
 npm install -g @mikeo-ai/claude-context-local-mcp
 claude-context-local-mcp
+
+# Or use with npx (recommended)
+npx @mikeo-ai/claude-context-local-mcp@latest
+```
+
+#### Method 3: Claude MCP Add Command
+
+```bash
+claude mcp add claude-context-local \
+  -e EMBEDDING_PROVIDER=Ollama \
+  -e POSTGRES_DATABASE=embeddings \
+  -- npx @mikeo-ai/claude-context-local-mcp@latest
 ```
 
 For detailed setup instructions, see [MCP-SETUP-GUIDE.md](./MCP-SETUP-GUIDE.md)
