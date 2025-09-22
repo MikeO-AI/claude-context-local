@@ -1,189 +1,200 @@
-# Contributing to Claude Context
+# Contributing to claude-context-local
 
-Thank you for your interest in contributing to Claude Context! This guide will help you get started.
+Thank you for your interest in contributing to claude-context-local! This is a community project aimed at providing a fully local alternative to cloud-based code context solutions.
+
+## 🎯 Project Goals
+
+- Maintain 100% local operation with no external dependencies
+- Provide easy setup and deployment options
+- Support multiple local databases and embedding models
+- Ensure privacy and data sovereignty for users
+- Keep compatibility with Claude Code MCP protocol
 
 ## 🚀 Getting Started
 
-### Prerequisites
-
-- Node.js >= 20.0.0 and < 24.0.0
-- pnpm >= 10.0.0
-- Git
-
-### Development Setup
-
-1. **Fork and Clone**
-
+1. **Fork the repository**
    ```bash
-   git clone https://github.com/your-username/claude-context.git
-   cd claude-context
+   git clone https://github.com/MikeO-AI/claude-context-local.git
+   cd claude-context-local
    ```
 
-2. **Platform-Specific Setup**
-
-   **Windows Users:**
-
-   ```powershell
-   # Configure git line endings (recommended)
-   git config core.autocrlf false
-
-   # Ensure pnpm is installed
-   npm install -g pnpm
-   ```
-
-   **Linux/macOS Users:**
-
-   ```bash
-   # Standard setup - no additional configuration needed
-   ```
-
-3. **Install Dependencies**
-
+2. **Install dependencies**
    ```bash
    pnpm install
    ```
 
-4. **Build All Packages**
+3. **Set up local environment**
+   ```bash
+   # Start PostgreSQL
+   brew services start postgresql@14
 
+   # Start Ollama
+   ollama serve
+
+   # Pull the embedding model
+   ollama pull DC1LEX/nomic-embed-text-v1.5-multimodal
+
+   # Create database
+   psql -U postgres -c "CREATE DATABASE embeddings;"
+   psql -U postgres -d embeddings -c "CREATE EXTENSION vector;"
+   ```
+
+4. **Build and test**
    ```bash
    pnpm build
+   node test-postgres.js
    ```
 
-5. **Start Development Mode**
+## 📝 Development Guidelines
 
-   ```bash
-   pnpm dev
-   ```
+### Code Style
+- Use TypeScript for type safety
+- Follow existing code formatting (2 spaces, no semicolons in TS)
+- Add JSDoc comments for public APIs
+- Keep functions small and focused
 
-## 📁 Project Structure
+### Commit Messages
+Follow conventional commits format:
+- `feat:` New feature
+- `fix:` Bug fix
+- `docs:` Documentation changes
+- `test:` Test additions or changes
+- `refactor:` Code refactoring
+- `perf:` Performance improvements
+- `chore:` Build process or auxiliary tool changes
 
+Examples:
 ```
-claude-context/
-├── packages/
-│   ├── core/              # Core indexing engine
-│   ├── vscode-extension/  # VSCode extension
-│   └── mcp/              # Model Context Protocol server
-├── examples/
-│   └── basic-usage/      # Basic usage example 
-```
-
-### Package-Specific Development
-
-Each package has its own development guide with specific instructions:
-
-- **[Core Package](packages/core/CONTRIBUTING.md)** - Develop the core indexing engine
-- **[VSCode Extension](packages/vscode-extension/CONTRIBUTING.md)** - Develop the VSCode extension
-- **[MCP Server](packages/mcp/CONTRIBUTING.md)** - Develop the MCP protocol server
-
-## 🛠️ Development Workflow
-
-### Building All Packages
-
-```bash
-# Build all packages
-pnpm build
-
-# Clean and rebuild
-pnpm clean && pnpm build
-
-# Development mode (watch all packages)
-pnpm dev
+feat: add SQLite support for vector storage
+fix: correct dimension mismatch in PostgreSQL queries
+docs: update README with Docker instructions
 ```
 
-### Package-Specific Development
+### Testing
+- Add tests for new features
+- Ensure existing tests pass
+- Test with different configurations
+- Verify MCP integration with Claude Code
 
-For detailed development instructions for each package, see:
+## 🎁 Areas for Contribution
 
-- [Core Package Development](packages/core/CONTRIBUTING.md)
-- [VSCode Extension Development](packages/vscode-extension/CONTRIBUTING.md)
-- [MCP Server Development](packages/mcp/CONTRIBUTING.md)
+### High Priority
+- **SQLite Support**: Add SQLite with sqlite-vss for simpler setup
+- **DuckDB Integration**: Support for analytical workloads
+- **More Embedding Models**: Support for other Ollama models
+- **Performance**: Query optimization and caching
+- **Docker Improvements**: One-click deployment solution
 
-## 📝 Making Changes
+### Medium Priority
+- **Web UI**: Management interface for indexed codebases
+- **Incremental Indexing**: Only update changed files
+- **Multiple Collections**: Support organizing code into collections
+- **Batch Operations**: Optimize bulk indexing
+- **Progress Reporting**: Better feedback during indexing
 
-### Commit Guidelines
+### Low Priority
+- **Alternative Embeddings**: Support for local alternatives to Ollama
+- **Hybrid Search**: Combine vector and keyword search
+- **Export/Import**: Backup and restore functionality
+- **Metrics**: Performance monitoring and statistics
 
-We follow conventional commit format:
+## 🔄 Pull Request Process
 
-```
-type(scope): description
-
-feat(core): add new embedding provider
-fix(vscode): resolve search result display issue
-docs(readme): update installation instructions
-refactor(mcp): improve error handling
-```
-
-**Types**: `feat`, `fix`, `docs`, `refactor`, `perf`, `chore`
-
-**Scopes**: `core`, `vscode`, `mcp`, `examples`, `docs`
-
-### Pull Request Process
-
-1. **Create Feature Branch**
-
+1. **Create a feature branch**
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
-2. **Make Your Changes**
-   - Keep changes focused and atomic
-   - Update documentation if needed
+2. **Make your changes**
+   - Write clean, documented code
+   - Add/update tests
+   - Update documentation
 
-3. **Build and Verify**
-
+3. **Test thoroughly**
    ```bash
    pnpm build
+   pnpm test
+   node test-postgres.js
    ```
 
-4. **Commit Your Changes**
+4. **Submit PR**
+   - Clear description of changes
+   - Link related issues
+   - Include test results
+   - Add screenshots if UI changes
 
-   ```bash
-   git add .
-   git commit -m "feat(core): add your feature description"
-   ```
+5. **Review process**
+   - Address review comments
+   - Keep PR focused and small
+   - Be patient and respectful
 
-5. **Push and Create PR**
+## 🐛 Reporting Issues
 
-   ```bash
-   git push origin feature/your-feature-name
-   ```
+### Bug Reports
+Include:
+- Environment (OS, Node version, PostgreSQL version)
+- Steps to reproduce
+- Expected vs actual behavior
+- Error messages and logs
+- Minimal reproduction code
 
-## 🎯 Contribution Areas
+### Feature Requests
+Include:
+- Use case description
+- Proposed solution
+- Alternative approaches considered
+- Impact on existing functionality
 
-### Priority Areas
+## 💡 Architecture Decisions
 
-- **Core Engine**: Improve indexing performance and accuracy
-- **Embedding Providers**: Add support for more embedding services
-- **Vector Databases**: Extend database integration options
-- **Documentation**: Improve examples and guides
-- **Bug Fixes**: Fix reported issues
+### Why PostgreSQL?
+- Mature, reliable, widely deployed
+- pgvector provides excellent vector operations
+- Easy backup and migration
+- Good performance for most use cases
 
-### Ideas for Contribution
+### Why Ollama?
+- True local execution
+- No API keys required
+- Good model selection
+- Active development and community
 
-- Add support for new programming languages
-- Improve code chunking strategies
-- Enhance search result ranking
-- Add configuration options
-- Create more usage examples
+### Future Considerations
+- Support for multiple databases simultaneously
+- Pluggable embedding providers
+- Distributed indexing for large codebases
+- Real-time file watching and updates
 
-## 📋 Reporting Issues
+## 🤝 Code of Conduct
 
-When reporting bugs or requesting features:
+- Be respectful and inclusive
+- Welcome newcomers and help them get started
+- Focus on constructive criticism
+- Respect differing opinions
+- Keep discussions professional
 
-1. **Check Existing Issues**: Search for similar issues first
-2. **Use Templates**: Follow the issue templates when available
-3. **Provide Context**: Include relevant details about your environment
-4. **Steps to Reproduce**: Clear steps for reproducing bugs
+## 📄 Legal
 
-## 💬 Getting Help
+- Contributions are licensed under MIT
+- Maintain attribution to original claude-context project
+- Ensure no proprietary code is included
+- Respect third-party licenses
 
-- **GitHub Issues**: For bugs and feature requests
-- **GitHub Discussions**: For questions and general discussion
+## 🆘 Getting Help
 
-## 📄 License
+- Open an issue for bugs or features
+- Join discussions in GitHub Discussions
+- Check existing issues before creating new ones
+- Be clear and provide context
 
-By contributing to Claude Context, you agree that your contributions will be licensed under the MIT License.
+## 🙏 Acknowledgments
+
+Special thanks to:
+- Original claude-context team at Zilliz
+- Contributors to PostgreSQL and pgvector
+- Ollama team and community
+- All contributors to this project
 
 ---
 
-Thank you for contributing to Claude Context! 🎉
+Thank you for helping make claude-context-local better for everyone!

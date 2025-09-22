@@ -68,3 +68,14 @@ repos
 
 evaluation/retrieval_results*
 .venv/
+
+# PostgreSQL local data
+postgres_data/
+ollama_data/
+
+# Test files
+test-*.js
+!test-postgres.js
+
+# MCP snapshot files
+mcp-codebase-snapshot.json

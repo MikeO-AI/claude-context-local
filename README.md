@@ -1,753 +1,253 @@
-![](assets/claude-context.png)
+# claude-context-local
 
-### Your entire codebase as Claude's context
+A local-first implementation of [claude-context](https://github.com/zilliztech/claude-context) MCP server that replaces cloud dependencies with local alternatives for complete privacy and zero API costs.
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org/)
-[![Documentation](https://img.shields.io/badge/Documentation-📚-orange.svg)](docs/)
-[![VS Code Marketplace](https://img.shields.io/visual-studio-marketplace/v/zilliz.semanticcodesearch?label=VS%20Code%20Extension&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=zilliz.semanticcodesearch)
-[![npm - core](https://img.shields.io/npm/v/@zilliz/claude-context-core?label=%40zilliz%2Fclaude-context-core&logo=npm)](https://www.npmjs.com/package/@zilliz/claude-context-core)
-[![npm - mcp](https://img.shields.io/npm/v/@zilliz/claude-context-mcp?label=%40zilliz%2Fclaude-context-mcp&logo=npm)](https://www.npmjs.com/package/@zilliz/claude-context-mcp)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/zilliz_universe.svg?style=social&label=Follow%20%40Zilliz)](https://twitter.com/zilliz_universe)
-[![DeepWiki](https://img.shields.io/badge/DeepWiki-AI%20Docs-purple.svg?logo=gitbook&logoColor=white)](https://deepwiki.com/zilliztech/claude-context)
-<a href="https://discord.gg/mKc3R95yE5"><img height="20" src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="discord" /></a>
-</div>
+## < Key Features
 
-**Claude Context** is an MCP plugin that adds semantic code search to Claude Code and other AI coding agents, giving them deep context from your entire codebase.
+- **100% Local**: No external API calls, all processing happens on your machine
+- **PostgreSQL + pgvector**: Replaces Milvus/Zilliz Cloud with local PostgreSQL
+- **Ollama Embeddings**: Uses free, open-source models instead of OpenAI
+- **Privacy-First**: Your code never leaves your machine
+- **Zero API Costs**: No subscription fees or usage charges
+- **Multimodal Support**: Nomic embedding model supports text and images
 
-🧠 **Your Entire Codebase as Context**: Claude Context uses semantic search to find all relevant code from millions of lines. No multi-round discovery needed. It brings results straight into the Claude's context.
-
-💰 **Cost-Effective for Large Codebases**: Instead of loading entire directories into Claude for every request, which can be very expensive, Claude Context efficiently stores your codebase in a vector database and only uses related code in context to keep your costs manageable.
-
----
-
-## 🚀 Demo
-
-![img](https://lh7-rt.googleusercontent.com/docsz/AD_4nXf2uIf2c5zowp-iOMOqsefHbY_EwNGiutkxtNXcZVJ8RI6SN9DsCcsc3amXIhOZx9VcKFJQLSAqM-2pjU9zoGs1r8GCTUL3JIsLpLUGAm1VQd5F2o5vpEajx2qrc77iXhBu1zWj?key=qYdFquJrLcfXCUndY-YRBQ)
-
-Model Context Protocol (MCP) allows you to integrate Claude Context with your favorite AI coding assistants, e.g. Claude Code.
-
-## Quick Start
+## =� Quick Start
 
 ### Prerequisites
 
-<details>
-<summary>Get a free vector database on Zilliz Cloud 👈</summary>
+1. **Install PostgreSQL and pgvector**:
+```bash
+brew install postgresql@14 pgvector
+brew services start postgresql@14
+```
 
-Claude Context needs a vector database. You can [sign up](https://cloud.zilliz.com/signup?utm_source=github&utm_medium=referral&utm_campaign=2507-codecontext-readme) on Zilliz Cloud to get an API key.
+2. **Install and configure Ollama**:
+```bash
+brew install ollama
+ollama serve  # Start in a separate terminal
+ollama pull DC1LEX/nomic-embed-text-v1.5-multimodal
+```
 
-![](assets/signup_and_get_apikey.png)
+3. **Setup database**:
+```bash
+psql -U postgres -c "CREATE DATABASE embeddings;"
+psql -U postgres -d embeddings -c "CREATE EXTENSION IF NOT EXISTS vector;"
+```
 
-Copy your Personal Key to replace `your-zilliz-cloud-api-key` in the configuration examples.
-</details>
-
-<details>
-<summary>Get OpenAI API Key for embedding model</summary>
-
-You need an OpenAI API key for the embedding model. You can get one by signing up at [OpenAI](https://platform.openai.com/api-keys).  
-
-Your API key will look like this: it always starts with `sk-`.  
-Copy your key and use it in the configuration examples below as `your-openai-api-key`.
-
-</details>
-
-### Configure MCP for Claude Code
-
-**System Requirements:**
-
-- Node.js >= 20.0.0 and < 24.0.0
-
-> Claude Context is not compatible with Node.js 24.0.0, you need downgrade it first if your node version is greater or equal to 24.
-
-#### Configuration
-
-Use the command line interface to add the Claude Context MCP server:
+### Installation
 
 ```bash
-claude mcp add claude-context \
-  -e OPENAI_API_KEY=sk-your-openai-api-key \
-  -e MILVUS_TOKEN=your-zilliz-cloud-api-key \
-  -- npx @zilliz/claude-context-mcp@latest
+# Clone the repository
+git clone https://github.com/MikeO-AI/claude-context-local.git
+cd claude-context-local
+
+# Install dependencies
+pnpm install
+
+# Build the project
+pnpm build
+
+# Test the integration
+node test-postgres.js
 ```
 
-See the [Claude Code MCP documentation](https://docs.anthropic.com/en/docs/claude-code/mcp) for more details about MCP server management.
-
-### Other MCP Client Configurations
-
-<details>
-<summary><strong>OpenAI Codex CLI</strong></summary>
-
-Codex CLI uses TOML configuration files:
-
-1. Create or edit the `~/.codex/config.toml` file.
-
-2. Add the following configuration:
-
-```toml
-# IMPORTANT: the top-level key is `mcp_servers` rather than `mcpServers`.
-[mcp_servers.claude-context]
-command = "npx"
-args = ["@zilliz/claude-context-mcp@latest"]
-env = { "OPENAI_API_KEY" = "your-openai-api-key", "MILVUS_TOKEN" = "your-zilliz-cloud-api-key" }
-# Optional: override the default 10s startup timeout
-startup_timeout_ms = 20000
-```
-
-3. Save the file and restart Codex CLI to apply the changes.
-
-</details>
-
-<details>
-<summary><strong>Gemini CLI</strong></summary>
-
-Gemini CLI requires manual configuration through a JSON file:
-
-1. Create or edit the `~/.gemini/settings.json` file.
-2. Add the following configuration:
-
-```json
-{
-  "mcpServers": {
-    "claude-context": {
-      "command": "npx",
-      "args": ["@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-3. Save the file and restart Gemini CLI to apply the changes.
-
-</details>
-
-<details>
-<summary><strong>Qwen Code</strong></summary>
-
-Create or edit the `~/.qwen/settings.json` file and add the following configuration:
-
-```json
-{
-  "mcpServers": {
-    "claude-context": {
-      "command": "npx",
-      "args": ["@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-<summary><strong>Cursor</strong></summary>
-
-<a href="https://cursor.com/install-mcp?name=claude-context&config=JTdCJTIyY29tbWFuZCUyMiUzQSUyMm5weCUyMC15JTIwJTQwemlsbGl6JTJGY29kZS1jb250ZXh0LW1jcCU0MGxhdGVzdCUyMiUyQyUyMmVudiUyMiUzQSU3QiUyMk9QRU5BSV9BUElfS0VZJTIyJTNBJTIyeW91ci1vcGVuYWktYXBpLWtleSUyMiUyQyUyMk1JTFZVU19BRERSRVNTJTIyJTNBJTIybG9jYWxob3N0JTNBMTk1MzAlMjIlN0QlN0Q%3D"><img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Add claude-context MCP server to Cursor" height="32" /></a>
-
-Go to: `Settings` -> `Cursor Settings` -> `MCP` -> `Add new global MCP server`
-
-Pasting the following configuration into your Cursor `~/.cursor/mcp.json` file is the recommended approach. You may also install in a specific project by creating `.cursor/mcp.json` in your project folder. See [Cursor MCP docs](https://docs.cursor.com/context/model-context-protocol) for more info.
-
-```json
-{
-  "mcpServers": {
-    "claude-context": {
-      "command": "npx",
-      "args": ["-y", "@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-<summary><strong>Void</strong></summary>
-
-Go to: `Settings` -> `MCP` -> `Add MCP Server`
-
-Add the following configuration to your Void MCP settings:
-
-```json
-{
-  "mcpServers": {
-    "code-context": {
-      "command": "npx",
-      "args": ["-y", "@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-<summary><strong>Claude Desktop</strong></summary>
-
-Add to your Claude Desktop configuration:
-
-```json
-{
-  "mcpServers": {
-    "claude-context": {
-      "command": "npx",
-      "args": ["@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-<summary><strong>Windsurf</strong></summary>
-
-Windsurf supports MCP configuration through a JSON file. Add the following configuration to your Windsurf MCP settings:
-
-```json
-{
-  "mcpServers": {
-    "claude-context": {
-      "command": "npx",
-      "args": ["-y", "@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-<summary><strong>VS Code</strong></summary>
-
-The Claude Context MCP server can be used with VS Code through MCP-compatible extensions. Add the following configuration to your VS Code MCP settings:
-
-```json
-{
-  "mcpServers": {
-    "claude-context": {
-      "command": "npx",
-      "args": ["-y", "@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-</details>
-
-<details>
-<summary><strong>Cherry Studio</strong></summary>
-
-Cherry Studio allows for visual MCP server configuration through its settings interface. While it doesn't directly support manual JSON configuration, you can add a new server via the GUI:
-
-1. Navigate to **Settings → MCP Servers → Add Server**.
-2. Fill in the server details:
-   - **Name**: `claude-context`
-   - **Type**: `STDIO`
-   - **Command**: `npx`
-   - **Arguments**: `["@zilliz/claude-context-mcp@latest"]`
-   - **Environment Variables**:
-     - `OPENAI_API_KEY`: `your-openai-api-key`
-     - `MILVUS_ADDRESS`: `your-zilliz-cloud-public-endpoint`
-     - `MILVUS_TOKEN`: `your-zilliz-cloud-api-key`
-3. Save the configuration to activate the server.
-
-</details>
-
-<details>
-<summary><strong>Cline</strong></summary>
-
-Cline uses a JSON configuration file to manage MCP servers. To integrate the provided MCP server configuration:
-
-1. Open Cline and click on the **MCP Servers** icon in the top navigation bar.
-
-2. Select the **Installed** tab, then click **Advanced MCP Settings**.
-
-3. In the `cline_mcp_settings.json` file, add the following configuration:
-
-```json
-{
-  "mcpServers": {
-    "claude-context": {
-      "command": "npx",
-      "args": ["@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-4. Save the file.
-
-</details>
-
-<details>
-<summary><strong>Augment</strong></summary>
-
-To configure Claude Context MCP in Augment Code, you can use either the graphical interface or manual configuration.
-
-#### **A. Using the Augment Code UI**
-
-1. Click the hamburger menu.
-
-2. Select **Settings**.
-
-3. Navigate to the **Tools** section.
-
-4. Click the **+ Add MCP** button.
-
-5. Enter the following command:
-
-   ```
-   npx @zilliz/claude-context-mcp@latest
-   ```
-
-6. Name the MCP: **Claude Context**.
-
-7. Click the **Add** button.
-
-------
-
-#### **B. Manual Configuration**
-
-1. Press Cmd/Ctrl Shift P or go to the hamburger menu in the Augment panel
-2. Select Edit Settings
-3. Under Advanced, click Edit in settings.json
-4. Add the server configuration to the `mcpServers` array in the `augment.advanced` object
-
-```json
-"augment.advanced": { 
-  "mcpServers": [ 
-    { 
-      "name": "claude-context", 
-      "command": "npx", 
-      "args": ["-y", "@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  ]
-}
-```
-
-</details>
-
-<details>
-<summary><strong>Roo Code</strong></summary>
-
-Roo Code utilizes a JSON configuration file for MCP servers:
-
-1. Open Roo Code and navigate to **Settings → MCP Servers → Edit Global Config**.
-
-2. In the `mcp_settings.json` file, add the following configuration:
-
-```json
-{
-  "mcpServers": {
-    "claude-context": {
-      "command": "npx",
-      "args": ["@zilliz/claude-context-mcp@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-openai-api-key",
-        "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-        "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-      }
-    }
-  }
-}
-```
-
-3. Save the file to activate the server.
-
-</details>
-
-<details>
-<summary><strong>Zencoder</strong></summary>
-
-Zencoder offers support for MCP tools and servers in both its JetBrains and VS Code plugin versions.
-
-1. Go to the Zencoder menu (...)
-2. From the dropdown menu, select `Tools`
-3. Click on the `Add Custom MCP`
-4. Add the name (i.e. `Claude Context` and server configuration from below, and make sure to hit the `Install` button
-
-```json
-{
-    "command": "npx",
-    "args": ["@zilliz/claude-context-mcp@latest"],
-    "env": {
-      "OPENAI_API_KEY": "your-openai-api-key",
-      "MILVUS_ADDRESS": "your-zilliz-cloud-public-endpoint",
-      "MILVUS_TOKEN": "your-zilliz-cloud-api-key"
-    }
-}
-
-```
-
-5. Save the server by hitting the `Install` button.
-
-</details>
-
-<details>
-<summary><strong>LangChain/LangGraph</strong></summary>
-
-For LangChain/LangGraph integration examples, see [this example](https://github.com/zilliztech/claude-context/blob/643796a0d30e706a2a0dff3d55621c9b5d831807/evaluation/retrieval/custom.py#L88).
-
-</details>
-
-<details>
-<summary><strong>Other MCP Clients</strong></summary>
-
-The server uses stdio transport and follows the standard MCP protocol. It can be integrated with any MCP-compatible client by running:
+### Running the MCP Server
 
 ```bash
-npx @zilliz/claude-context-mcp@latest
+# Start with default settings (PostgreSQL on localhost, Ollama on localhost:11434)
+node packages/mcp/dist/index-postgres.js
+
+# Or with custom configuration
+POSTGRES_HOST=your-db POSTGRES_PASSWORD=your-pass node packages/mcp/dist/index-postgres.js
 ```
 
-</details>
+## =' Configuration
 
----
+### Claude Code Integration
 
-### Usage in Your Codebase
+Add to your Claude Code config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
 
-1. **Open Claude Code**
+```json
+{
+  "mcpServers": {
+    "claude-context-local": {
+      "command": "node",
+      "args": ["/absolute/path/to/claude-context-local/packages/mcp/dist/index-postgres.js"],
+      "env": {
+        "EMBEDDING_PROVIDER": "Ollama",
+        "OLLAMA_MODEL": "DC1LEX/nomic-embed-text-v1.5-multimodal",
+        "OLLAMA_HOST": "http://localhost:11434",
+        "POSTGRES_HOST": "localhost",
+        "POSTGRES_PORT": "5432",
+        "POSTGRES_DATABASE": "embeddings",
+        "POSTGRES_USER": "postgres",
+        "POSTGRES_PASSWORD": "postgres"
+      }
+    }
+  }
+}
+```
 
-   ```
-   cd your-project-directory
-   claude
-   ```
+### Environment Variables
 
-2. **Index your codebase**:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `EMBEDDING_PROVIDER` | `Ollama` | Embedding provider (Ollama recommended) |
+| `OLLAMA_MODEL` | `DC1LEX/nomic-embed-text-v1.5-multimodal` | Ollama model to use |
+| `OLLAMA_HOST` | `http://localhost:11434` | Ollama server URL |
+| `POSTGRES_HOST` | `localhost` | PostgreSQL host |
+| `POSTGRES_PORT` | `5432` | PostgreSQL port |
+| `POSTGRES_DATABASE` | `embeddings` | Database name |
+| `POSTGRES_USER` | `postgres` | Database user |
+| `POSTGRES_PASSWORD` | `postgres` | Database password |
 
-   ```
-   Index this codebase
-   ```
+## =� Docker Setup (Optional)
 
-3. **Check indexing status**:
+For easier deployment, use Docker Compose:
 
-   ```
-   Check the indexing status
-   ```
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: embeddings
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-4. **Start searching**:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    command: serve
 
-   ```
-   Find functions that handle user authentication
-   ```
+volumes:
+  postgres_data:
+  ollama_data:
+```
 
-🎉 **That's it!** You now have semantic code search in Claude Code.
+Then:
+```bash
+docker-compose up -d
+docker exec -it claude-context-local_ollama_1 ollama pull DC1LEX/nomic-embed-text-v1.5-multimodal
+```
 
----
+## =� MCP Tools
 
-### Environment Variables Configuration
-
-For more detailed MCP environment variable configuration, see our [Environment Variables Guide](docs/getting-started/environment-variables.md).
-
-### Using Different Embedding Models
-
-To configure custom embedding models (e.g., `text-embedding-3-large` for OpenAI, `voyage-code-3` for VoyageAI), see the [MCP Configuration Examples](packages/mcp/README.md#embedding-provider-configuration) for detailed setup instructions for each provider.
-
-### File Inclusion & Exclusion Rules
-
-For detailed explanation of file inclusion and exclusion rules, and how to customize them, see our [File Inclusion & Exclusion Rules](docs/dive-deep/file-inclusion-rules.md).
-
-### Available Tools
-
-#### 1. `index_codebase`
-
-Index a codebase directory for hybrid search (BM25 + dense vector).
-
-#### 2. `search_code`
-
-Search the indexed codebase using natural language queries with hybrid search (BM25 + dense vector).
-
-#### 3. `clear_index`
-
-Clear the search index for a specific codebase.
-
-#### 4. `get_indexing_status`
-
-Get the current indexing status of a codebase. Shows progress percentage for actively indexing codebases and completion status for indexed codebases.
-
----
-
-## 📊 Evaluation
-
-Our controlled evaluation demonstrates that Claude Context MCP achieves ~40% token reduction under the condition of equivalent retrieval quality. This translates to significant cost and time savings in production environments. This also means that, under the constraint of limited token context length, using Claude Context yields better retrieval and answer results.
-
-![MCP Efficiency Analysis](assets/mcp_efficiency_analysis_chart.png)
-
-For detailed evaluation methodology and results, see the [evaluation directory](evaluation/).
-
----
-
-## 🏗️ Architecture
-
-![](assets/Architecture.png)
-
-### 🔧 Implementation Details
-
-- 🔍 **Hybrid Code Search**: Ask questions like *"find functions that handle user authentication"* and get relevant, context-rich code instantly using advanced hybrid search (BM25 + dense vector).
-- 🧠 **Context-Aware**: Discover large codebase, understand how different parts of your codebase relate, even across millions of lines of code.
-- ⚡ **Incremental Indexing**: Efficiently re-index only changed files using Merkle trees.
-- 🧩 **Intelligent Code Chunking**: Analyze code in Abstract Syntax Trees (AST) for chunking.
-- 🗄️ **Scalable**: Integrates with Zilliz Cloud for scalable vector search, no matter how large your codebase is.
-- 🛠️ **Customizable**: Configure file extensions, ignore patterns, and embedding models.
-
-### Core Components
-
-Claude Context is a monorepo containing three main packages:
-
-- **`@zilliz/claude-context-core`**: Core indexing engine with embedding and vector database integration
-- **VSCode Extension**: Semantic Code Search extension for Visual Studio Code
-- **`@zilliz/claude-context-mcp`**: Model Context Protocol server for AI agent integration
-
-### Supported Technologies
-
-- **Embedding Providers**: [OpenAI](https://openai.com), [VoyageAI](https://voyageai.com), [Ollama](https://ollama.ai), [Gemini](https://gemini.google.com)
-- **Vector Databases**: [Milvus](https://milvus.io) or [Zilliz Cloud](https://zilliz.com/cloud)(fully managed vector database as a service)
-- **Code Splitters**: AST-based splitter (with automatic fallback), LangChain character-based splitter
-- **Languages**: TypeScript, JavaScript, Python, Java, C++, C#, Go, Rust, PHP, Ruby, Swift, Kotlin, Scala, Markdown
-- **Development Tools**: VSCode, Model Context Protocol
-
----
-
-## 📦 Other Ways to Use Claude Context
-
-While MCP is the recommended way to use Claude Context with AI assistants, you can also use it directly or through the VSCode extension.
-
-### Build Applications with Core Package
-
-The `@zilliz/claude-context-core` package provides the fundamental functionality for code indexing and semantic search.
-
+### `add_codebase`
+Index a codebase directory for semantic search:
 ```typescript
-import { Context, MilvusVectorDatabase, OpenAIEmbedding } from '@zilliz/claude-context-core';
-
-// Initialize embedding provider
-const embedding = new OpenAIEmbedding({
-    apiKey: process.env.OPENAI_API_KEY || 'your-openai-api-key',
-    model: 'text-embedding-3-small'
-});
-
-// Initialize vector database
-const vectorDatabase = new MilvusVectorDatabase({
-    address: process.env.MILVUS_ADDRESS || 'your-zilliz-cloud-public-endpoint',
-    token: process.env.MILVUS_TOKEN || 'your-zilliz-cloud-api-key'
-});
-
-// Create context instance
-const context = new Context({
-    embedding,
-    vectorDatabase
-});
-
-// Index your codebase with progress tracking
-const stats = await context.indexCodebase('./your-project', (progress) => {
-    console.log(`${progress.phase} - ${progress.percentage}%`);
-});
-console.log(`Indexed ${stats.indexedFiles} files, ${stats.totalChunks} chunks`);
-
-// Perform semantic search
-const results = await context.semanticSearch('./your-project', 'vector database operations', 5);
-results.forEach(result => {
-    console.log(`File: ${result.relativePath}:${result.startLine}-${result.endLine}`);
-    console.log(`Score: ${(result.score * 100).toFixed(2)}%`);
-    console.log(`Content: ${result.content.substring(0, 100)}...`);
-});
+add_codebase({
+  path: "/path/to/your/project"
+})
 ```
 
-### VSCode Extension
-
-Integrates Claude Context directly into your IDE. Provides an intuitive interface for semantic code search and navigation.
-
-1. **Direct Link**: [Install from VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=zilliz.semanticcodesearch)
-2. **Manual Search**:
-    - Open Extensions view in VSCode (Ctrl+Shift+X or Cmd+Shift+X on Mac)
-    - Search for "Semantic Code Search"
-    - Click Install
-
-![img](https://lh7-rt.googleusercontent.com/docsz/AD_4nXdtCtT9Qi6o5mGVoxzX50r8Nb6zDFcjvTQR7WZ-xMbEsHEPPhSYAFVJ7q4-rETzxJ8wy1cyZmU8CmtpNhAU8PGOqVnE2kc2HCn1etDg97Qsh7m89kBjG4ZT7XBgO4Dp7BfFZx7eow?key=qYdFquJrLcfXCUndY-YRBQ)
----
-
-## 🛠️ Development
-
-### Setup Development Environment
-
-#### Prerequisites
-
-- Node.js 20.x or 22.x
-- pnpm (recommended package manager)
-
-#### Cross-Platform Setup
-
-```bash
-# Clone repository
-git clone https://github.com/zilliztech/claude-context.git
-cd claude-context
-
-# Install dependencies
-pnpm install
-
-# Build all packages
-pnpm build
-
-# Start development mode
-pnpm dev
+### `search_codebase`
+Search through indexed codebases:
+```typescript
+search_codebase({
+  query: "authentication logic",
+  path: "/path/to/your/project",
+  limit: 10
+})
 ```
 
-#### Windows-Specific Setup
+## =� Comparison with Original
 
-On Windows, ensure you have:
+| Feature | Original (Milvus) | Local (PostgreSQL) |
+|---------|-------------------|--------------------|
+| Vector Database | Milvus/Zilliz Cloud | PostgreSQL + pgvector |
+| Embeddings | OpenAI/VoyageAI | Ollama (local) |
+| Privacy | Data sent to cloud | 100% local |
+| Cost | API usage fees | Free |
+| Setup | Cloud account required | Local installation |
+| Internet | Required | Not required |
+| Dimensions | Variable | 768 (configurable) |
 
-- **Git for Windows** with proper line ending configuration
-- **Node.js** installed via the official installer or package manager
-- **pnpm** installed globally: `npm install -g pnpm`
+## > Credits & Attribution
 
-```powershell
-# Windows PowerShell/Command Prompt
-git clone https://github.com/zilliztech/claude-context.git
-cd claude-context
+This project is based on [claude-context](https://github.com/zilliztech/claude-context) by [Zilliz](https://github.com/zilliztech), licensed under the MIT License.
 
-# Configure git line endings (recommended)
-git config core.autocrlf false
+### What's Changed
+- Replaced Milvus/Zilliz Cloud with PostgreSQL + pgvector
+- Replaced OpenAI embeddings with Ollama
+- Added multimodal embedding support
+- Removed all external API dependencies
+- Added comprehensive PostgreSQL implementation
 
-# Install dependencies
-pnpm install
+### Original Contributors
+- [Zilliz Team](https://github.com/zilliztech) - Original claude-context implementation
+- [Cheney Zhang](https://github.com/shanghaikid) - Original author
 
-# Build all packages (uses cross-platform scripts)
-pnpm build
+## =� Documentation
 
-# Start development mode
-pnpm dev
-```
+- [PostgreSQL Setup Guide](./README-POSTGRES.md) - Detailed PostgreSQL configuration
+- [Test Script](./test-postgres.js) - Verify your installation
+- [Original Documentation](https://github.com/zilliztech/claude-context) - Reference the original project
 
-### Building
+## = Troubleshooting
 
-```bash
-# Build all packages (cross-platform)
-pnpm build
+### Common Issues
 
-# Build specific package
-pnpm build:core
-pnpm build:vscode
-pnpm build:mcp
+1. **pgvector not found**
+   ```bash
+   brew install pgvector
+   psql -U postgres -d embeddings -c "CREATE EXTENSION vector;"
+   ```
 
-# Performance benchmarking
-pnpm benchmark
-```
+2. **Ollama connection failed**
+   ```bash
+   ollama serve  # Start Ollama service
+   ```
 
-#### Windows Build Notes
+3. **Model not found**
+   ```bash
+   ollama pull DC1LEX/nomic-embed-text-v1.5-multimodal
+   ```
 
-- All build scripts are cross-platform compatible using rimraf
-- Build caching is enabled for faster subsequent builds
-- Use PowerShell or Command Prompt - both work equally well
+## =� Roadmap
 
-### Running Examples
+- [ ] SQLite support for simpler setup
+- [ ] Additional Ollama model support
+- [ ] Web UI for codebase management
+- [ ] Incremental indexing
+- [ ] Docker one-click deployment
+- [ ] Support for more local embedding models
 
-```bash
-# Development with file watching
-cd examples/basic-usage
-pnpm dev
-```
+## > Contributing
 
----
+Contributions are welcome! This is a community project aimed at providing a fully local alternative to cloud-based code context solutions.
 
-## 📖 Examples
+### How to Contribute
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
-Check the `/examples` directory for complete usage examples:
+### Areas for Contribution
+- Support for additional databases (SQLite, DuckDB)
+- More embedding model integrations
+- Performance optimizations
+- Documentation improvements
+- Testing and bug fixes
 
-- **Basic Usage**: Simple indexing and search example
+## =� License
 
----
+MIT License - see [LICENSE](./LICENSE) for details.
 
-## ❓ FAQ
+This project includes code from [claude-context](https://github.com/zilliztech/claude-context) by Zilliz, also licensed under MIT.
 
-**Common Questions:**
+## P Star History
 
-- **[What files does Claude Context decide to embed?](docs/troubleshooting/faq.md#q-what-files-does-claude-context-decide-to-embed)**
-- **[Can I use a fully local deployment setup?](docs/troubleshooting/faq.md#q-can-i-use-a-fully-local-deployment-setup)**
-- **[Does it support multiple projects / codebases?](docs/troubleshooting/faq.md#q-does-it-support-multiple-projects--codebases)**
-- **[How does Claude Context compare to other coding tools?](docs/troubleshooting/faq.md#q-how-does-claude-context-compare-to-other-coding-tools-like-serena-context7-or-deepwiki)**
-
-❓ For detailed answers and more troubleshooting tips, see our [FAQ Guide](docs/troubleshooting/faq.md).
-
-🔧 **Encountering issues?** Visit our [Troubleshooting Guide](docs/troubleshooting/troubleshooting-guide.md) for step-by-step solutions.
-
-📚 **Need more help?** Check out our [complete documentation](docs/) for detailed guides and troubleshooting tips.
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
-
-**Package-specific contributing guides:**
-
-- [Core Package Contributing](packages/core/CONTRIBUTING.md)
-- [MCP Server Contributing](packages/mcp/CONTRIBUTING.md)  
-- [VSCode Extension Contributing](packages/vscode-extension/CONTRIBUTING.md)
+If you find this project useful, please consider giving it a star!
 
 ---
 
-## 🗺️ Roadmap
-
-- [x] AST-based code analysis for improved understanding
-- [x] Support for additional embedding providers
-- [ ] Agent-based interactive search mode
-- [x] Enhanced code chunking strategies
-- [ ] Search result ranking optimization
-- [ ] Robust Chrome Extension
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🔗 Links
-
-- [GitHub Repository](https://github.com/zilliztech/claude-context)
-- [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=zilliz.semanticcodesearch)
-- [Milvus Documentation](https://milvus.io/docs)
-- [Zilliz Cloud](https://zilliz.com/cloud)
+Built with d for the community by [MikeO-AI](https://github.com/MikeO-AI)

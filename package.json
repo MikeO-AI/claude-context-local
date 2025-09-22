@@ -1,7 +1,7 @@
 {
-    "name": "claude-context",
-    "version": "0.1.3",
-    "description": "A powerful code indexing tool with multi-platform support",
+    "name": "claude-context-local",
+    "version": "0.1.0",
+    "description": "Local-first codebase context provider for Claude using PostgreSQL and Ollama",
     "private": true,
     "scripts": {
         "build": "pnpm -r --filter='!./examples/*' build && pnpm -r --filter='./examples/*' build",
@@ -44,8 +44,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/zilliztech/claude-context.git"
+        "url": "https://github.com/MikeO-AI/claude-context-local.git"
     },
     "license": "MIT",
-    "author": "Cheney Zhang <277584121@qq.com>"
+    "author": "MikeO-AI (PostgreSQL implementation), Cheney Zhang <277584121@qq.com> (Original)",
+    "dependencies": {
+        "pg": "^8.16.3"
+    }
 }
