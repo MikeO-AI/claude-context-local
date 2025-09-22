@@ -57,13 +57,29 @@ node test-postgres.js
 
 ### Running the MCP Server
 
+#### Method 1: Direct Installation (Recommended)
+
 ```bash
+# First, validate your setup
+node validate-mcp-setup.js
+
 # Start with default settings (PostgreSQL on localhost, Ollama on localhost:11434)
 node packages/mcp/dist/index-postgres.js
 
 # Or with custom configuration
 POSTGRES_HOST=your-db POSTGRES_PASSWORD=your-pass node packages/mcp/dist/index-postgres.js
 ```
+
+#### Method 2: NPM Package (Coming Soon)
+
+Once published to npm, you'll be able to install globally:
+```bash
+# Note: Package publication pending
+npm install -g @mikeo-ai/claude-context-local-mcp
+claude-context-local-mcp
+```
+
+For detailed setup instructions, see [MCP-SETUP-GUIDE.md](./MCP-SETUP-GUIDE.md)
 
 ## ⚙️ Configuration
 
