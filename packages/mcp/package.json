@@ -3,9 +3,11 @@
     "version": "0.1.0",
     "description": "Local MCP server for Claude Context using PostgreSQL and Ollama",
     "type": "module",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "bin": "dist/index.js",
+    "main": "dist/index-postgres.js",
+    "types": "dist/index-postgres.d.ts",
+    "bin": {
+        "claude-context-local-mcp": "dist/index-postgres.js"
+    },
     "scripts": {
         "build": "pnpm clean && tsc --build --force",
         "dev": "tsx --watch src/index.ts",
